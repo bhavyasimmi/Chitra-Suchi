@@ -11,6 +11,7 @@ import plotly.graph_objs as go
 import numpy as np
 import datetime
 import get_sub_id as gsid
+from dbconnect import connectdb
 
 app = Flask(__name__)
  
@@ -121,32 +122,27 @@ def results():
 	student_list = []
 	conn1 = connectdb()
 	cursor1 = conn1.cursor(buffered=True)
+	
 	if conn1.is_connected():
-		print("True")
+		# fetch dates from database on to plot on x-axis	
+		cursor1.execute("SELECT Distinct date from attendance")
+		out1 = cursor1.fetchall()
+		for i in out1:
+			date_list.append(i[0])
 
-	# fetch dates from database on to plot on x-axis	
-	cursor1.execute("SELECT Distinct date from attendance")
-	out1 = cursor1.fetchall()
-	print(out1)
-	for i in out1:
-		date_list.append(i[0])
-	print(date_list)
+		# fetch total presence on specific date from database on to plot on y-axis	
+		try :
+			for i in date_list:
+				cursor1.execute("SELECT count(rno) FROM attendance where date = '%s' " %i)
+				total = cursor1.fetchall()
+				# total returns a list of tuple
+				student_list.append(str(total[0][0]))
+		except mysql.errors.InternalError as e:
+			print(e)
 
-	# fetch total presence on specific date from database on to plot on y-axis	
-	try :
-		for i in date_list:
-			cursor1.execute("SELECT count(rno) FROM attendance where date = '%s' " %i)
-			total = cursor1.fetchall()
-			print("total : ",total)
-			# total returns a list of tuple
-			student_list.append(str(total[0][0]))
-			print("student list : ",student_list)
-	except mysql.errors.InternalError as e:
-		print(e)
-
-	# my_plot_div = plot([Scatter(x=date_list, y=student_list)], output_type='div')    	
-	my_plot_div = plot([Bar(x=date_list, y=student_list)], output_type='div')    	
-	return render_template('graph.html',div_placeholder=Markup(my_plot_div))
+		# my_plot_div = plot([Scatter(x=date_list, y=student_list)], output_type='div')    	
+		my_plot_div = plot([Bar(x=date_list, y=student_list)], output_type='div')    	
+		return render_template('graph.html',div_placeholder=Markup(my_plot_div))
 
 if __name__ == "__main__":
     app.run(debug=True)
