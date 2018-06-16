@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>Chitra-Suchi</title>
+    <link  rel="stylesheet" type="text/css" href="/static/mark_attendance.css">
+    <link href="https://fonts.googleapis.com/css?family=Amarante|Indie+Flower|Yatra+One" rel="stylesheet">
+  </head>
+  <body bgcolor="#fdddfe" style="width:1225px height:500px">
+    <h1>Mark Attendance</h1>
+    <div class="container">
+    <img  src="{{ url_for('video_feed') }}"> 
+	</div>
+    <br><br>
+    <a href="{{ url_for('capture_image')}}">mark attendance</a>
+  </body>
+</html>
