@@ -1,9 +1,17 @@
 #!/usr/bin/python3
 
-from flask import Flask, flash, redirect, render_template, request, session, abort,Response
+from flask import Flask, flash, redirect, render_template, request, session, abort,Response,Markup
 import enroll_form
 from camera import VideoCamera
- 
+import mysql.connector as mysql
+from plotly.offline import plot
+from plotly.graph_objs import Scatter
+from plotly.graph_objs import Bar
+import plotly.graph_objs as go
+import numpy as np
+import datetime
+import get_sub_id as gsid
+
 app = Flask(__name__)
  
 camera1 = None
@@ -11,6 +19,9 @@ userdata = None
 
 @app.route("/")
 def index():
+	if camera1 != None :
+		camera1.__del__()
+		camera1 == None
 	return render_template("index.html")
 
 @app.route("/enroll", methods=['GET','POST'])
@@ -76,6 +87,7 @@ def video_feed():
     return Response(gen(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+# to mark attendance
 @app.route('/capture_image')
 def capture_image():
 	global camera1
@@ -85,7 +97,61 @@ def capture_image():
 	camera1.save_image()
 	camera1.__del__()
 	camera1 = None
-	return "image captured"
+	status = gsid.init()
+	return render_template('mark_attendance.html',message=status)
+
+#for showing details
+@app.route("/table")
+def create_table():
+
+	conn = mysql.connect(user='root',password='root',database='studentdb',host='127.0.0.1')
+	cursor = conn.cursor()
+
+	if conn.is_connected():
+		print("True")
+
+	response = "<head><meta http-equiv='refresh' content='7'></head>"
+
+	out = cursor.execute("SELECT * FROM students")
+		
+	data = cursor.fetchall()
+
+	return render_template('db_tables.html', data=data)
+
+# below code will show student economy on graph page linking matplotlib with html page
+@app.route("/showgraph")
+def results():
+	# create an empty list to be filled with the elements in future using np.append()
+	date_list = []
+	student_list = []
+	conn1 = mysql.connect(user='root',password='root',database='studentdb',host='localhost')
+	cursor1 = conn1.cursor(buffered=True)
+	if conn1.is_connected():
+		print("True")
+
+	# fetch dates from database on to plot on x-axis	
+	cursor1.execute("SELECT Distinct date from attendance")
+	out1 = cursor1.fetchall()
+	print(out1)
+	for i in out1:
+		date_list.append(i[0])
+	print(date_list)
+
+	# fetch total presence on specific date from database on to plot on y-axis	
+	try :
+		for i in date_list:
+			cursor1.execute("SELECT count(rno) FROM attendance where date = '%s' " %i)
+			total = cursor1.fetchall()
+			print("total : ",total)
+			# total returns a list of tuple
+			student_list.append(str(total[0][0]))
+			print("student list : ",student_list)
+	except mysql.errors.InternalError as e:
+		print(e)
+
+	# my_plot_div = plot([Scatter(x=date_list, y=student_list)], output_type='div')    	
+	my_plot_div = plot([Bar(x=date_list, y=student_list)], output_type='div')    	
+	return render_template('graph.html',div_placeholder=Markup(my_plot_div))
 
 if __name__ == "__main__":
     app.run(debug=True)

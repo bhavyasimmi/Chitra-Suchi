@@ -43,7 +43,7 @@ def init(data) :
 
 def already_registered(img_path='user_img.png') :
 	#recognizing registered faces
-	recognized_faces = kf.recognize_face(file=img_path, gallery_name='members')
+	recognized_faces = kf.recognize_face(file=img_path, gallery_name='students')
 
 	status = recognized_faces['images'][0]['transaction']['status']
 
@@ -83,7 +83,7 @@ def register(data,img_path='user_img.png') :
 
 def enroll_student(sid,img_path='user_img.png') :
 	#enrolling face
-	enrolled_face = kf.enroll_face(file=img_path, subject_id=str(sid), gallery_name='members')
+	enrolled_face = kf.enroll_face(file=img_path, subject_id=str(sid), gallery_name='students')
 	#returning status
 	status = enrolled_face['images'][0]['transaction']['status']
 
