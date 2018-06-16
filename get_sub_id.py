@@ -5,17 +5,16 @@ import json
 import mysql.connector as mysql
 import cv2
 import requests
-import mysql.connector as mysql
 import datetime
 
-# conn = None
-# cursor = None
+conn = None
+cursor = None
 
 #initializing enrollment
 def init() :
 
-	# global cursor
-	# global conn
+	global cursor
+	global conn
 
 	# credentials for kairos
 	# setting up API keys
@@ -24,27 +23,29 @@ def init() :
 
 	try :
 		# create a connection with database
-		# conn = mysql.connect(user='root',password='root',database='studentdb',host='localhost')
-		# cursor = conn.cursor()
+		conn = mysql.connect(user='root',password='root',database='studentdb',host='localhost')
+		cursor = conn.cursor()
 
-		# #check the connection with database
-		# if conn.is_connected():
-		# 	print("Database Connection is established")
+		#check the connection with database
+		if conn.is_connected():
+			print("Database Connection is established")
 		
 			sid = already_registered()
 			if	sid != None :
-				subid(sid) 
+				return mark_present(sid) 
+			elif sid == None :
+				return "no_sid"
 			else :
-				return "no sid"
+				return "no face error"
 
 	except kf.exceptions.ServiceRequestError as e1 :
 		print(e1)
 		return "kairos error"
 
 
-def already_registered(img_path='user_image.png') :
+def already_registered(img_path='user_img.png') :
 	#recognizing registered faces
-	recognized_faces = kf.recognize_face(file=img_path, gallery_name='members')
+	recognized_faces = kf.recognize_face(file=img_path, gallery_name='students')
 
 	status = recognized_faces['images'][0]['transaction']['status']
 
@@ -62,57 +63,24 @@ def already_registered(img_path='user_image.png') :
 	else :
 		return "Retake"
 
+# checking already enrolled or not and mark attendance
+def mark_present(sub_id):
 
-def subid(sub_id):
+	global conn
+	global cursor
 
-	conn = mysql.connect(user='bhavya',password='Bhavya1910',database='attendence',host='localhost')
-
-	now = datetime.datetime.today().strftime('%d/%m/%Y')
-	print(type(now))
 	if conn.is_connected():
 		print("Connected")
 
-	cur = conn.cursor()
+	now = datetime.datetime.today().strftime('%d/%m/%y')
 
-	sub_id=3
-	cur.execute("SELECT * from students where date=%s and rno=%s",(now,sub_id))
-	out = cur.fetchall()
-	# above out is a list of tuples having date
-	print(out)
+	# checking attendance already marked or not
+	cursor.execute("SELECT * from attendance where date=%s and rno=%s",(now,sub_id))
+	out = cursor.fetchall()
 
 	if out == [] :
-		cur.execute("INSERT into students Values(%s,%s)",(now,int(sub_id)))
+		cursor.execute("INSERT into attendance Values(%s,%s)",(now,int(sub_id)))
 		conn.commit()
-		print('inserted')
-
-	# count = 0
-	# rollno = sub_id
-	# print(type(rollno))
-	# print(type(sub_id))
-	# for i in out:
-	# 	count+=1
-	# 	if i[0]==now:
-	# 		break
-	# 	else :
-	# 		if count != len(out):
-	# 			pass
-	# 		else:
-	# 			cur.execute('INSERT INTO students(date) Values("%s")'%(now))
-	# 			conn.commit()
-
-
-	# cur.execute("SELECT * from students where date='%s'" %now)
-	# output = cur.fetchall()
-	# print(type(output[0][1]))
-	# if output[0][1]==rollno:
-	# 	print("your attendence has been marked")			
-	# else:
-	# 	print("entered else")
-	# 	cur.execute('UPDATE students SET rno=("%s") WHERE date=("%s")' ,(int(rollno),now))
-	# 	conn.commit()
-
-	# cur.execute("SELECT * from students")
-	# out = cur.fetchall()
-	# print(out)
-# subid(3)
-init()
+		return "marked"
+	else :
+		return "already_marked"
