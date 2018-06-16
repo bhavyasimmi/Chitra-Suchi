@@ -23,7 +23,7 @@ def init() :
 
 	try :
 		# create a connection with database
-		conn = mysql.connect(user='root',password='root',database='studentdb',host='localhost')
+		conn = connectdb()
 		cursor = conn.cursor()
 
 		#check the connection with database

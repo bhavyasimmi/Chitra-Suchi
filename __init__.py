@@ -34,12 +34,7 @@ def enroll():
 		if request.form["action"] == 'SUBMIT':
 
 			userdata = request.form
-
 			return render_template('take_pic.html',result=userdata)
-
-			# status = enroll_form.init(data)
-			# if status == mark_attendance :
-			# 	pass
 
 		else :
 			return "bad request!! Error"
@@ -104,7 +99,7 @@ def capture_image():
 @app.route("/table")
 def create_table():
 
-	conn = mysql.connect(user='root',password='root',database='studentdb',host='127.0.0.1')
+	conn = connectdb()
 	cursor = conn.cursor()
 
 	if conn.is_connected():
@@ -124,7 +119,7 @@ def results():
 	# create an empty list to be filled with the elements in future using np.append()
 	date_list = []
 	student_list = []
-	conn1 = mysql.connect(user='root',password='root',database='studentdb',host='localhost')
+	conn1 = connectdb()
 	cursor1 = conn1.cursor(buffered=True)
 	if conn1.is_connected():
 		print("True")
