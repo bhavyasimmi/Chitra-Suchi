@@ -42,10 +42,11 @@ def takepic():
 	global userdata
 
 	if camera1 == None :
+		print('object created')
 		camera1 = VideoCamera()
 	camera1.save_image()
 	camera1.__del__()
-
+	camera1 = None
 	status = enroll_form.init(userdata)
 	# userdata = None
 	return render_template('take_pic.html',message=status,result=userdata)
@@ -62,6 +63,7 @@ def mark_attendance():
 def gen():
 	global camera1
 	if camera1 == None :
+		print('object created')
 		camera1 = VideoCamera()
 	while True:
 		frame = camera1.get_frame()
@@ -69,9 +71,9 @@ def gen():
 		yield (b'--frame\r\n'
 				b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
+
 @app.route('/video_feed')
 def video_feed():
-
     return Response(gen(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
@@ -79,11 +81,12 @@ def video_feed():
 def capture_image():
 	global camera1
 	if camera1 == None :
+		print('object created')
 		camera1 = VideoCamera()
 	camera1.save_image()
 	camera1.__del__()
+	camera1 = None
 	return "image captured"
-
 
 if __name__ == "__main__":
     app.run(debug=True)
