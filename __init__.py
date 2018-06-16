@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from flask import Flask, flash, redirect, render_template, request, session, abort,Response
-import webcamera
 import enroll_form
 from camera import VideoCamera
  
