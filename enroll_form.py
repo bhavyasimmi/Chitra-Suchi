@@ -37,7 +37,7 @@ def init(data) :
 				return enroll_student(sid)
 
 
-	except kf.exceptions.ServiceRequestError as e1 :
+	except kf.exceptions.ServiceRequestError as e1sid = dic_data['images'][0]['transaction']['subject_id'] :
 		print(e1)
 		return "kairos error"
 
@@ -49,6 +49,10 @@ def already_registered(img_path='user_img.png') :
 	status = recognized_faces['images'][0]['transaction']['status']
 
 	if status == 'success' :
+		'''sid = dic_data['images'][0]['transaction']['subject_id']
+		conn = connectdb()
+		curs = co.cursor()
+		curs.execute("SELECT * from students where sid='%s'" %int(sid))'''
 		return True
 
 	elif status == 'failure' :
