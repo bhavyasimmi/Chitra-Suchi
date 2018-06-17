@@ -8,14 +8,30 @@
     <script type="text/javascript">
 
         var status = '{{ message }}';
-        if (status){
-            if (window.confirm('yoy are enrolled and press OK to mark attendance')){
+        if (status == "enrolled"){
+            if (window.confirm('Successfully Enrolled. Press OK to Mark Attendance')){
                 window.location ='/mark_attendance';
             }
             else {
               window.location ='/';
             }
         }
+        else if (status == "mark_attendance"){
+            if (window.confirm('Already Enrolled. Press OK to Mark Attendance')){
+                window.location ='/mark_attendance';
+            }
+            else {
+              window.location ='/';
+            }
+        }
+        else if (status == "not_able_to_enroll"){
+          alert("Unable To Process! Try A Gain Later");
+          window.location = '/';
+        }
+        else {
+
+        }
+        
     </script>
 
   </head>
