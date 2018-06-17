@@ -48,14 +48,13 @@ def already_registered(img_path='user_img.png') :
 	#recognizing registered faces
 	recognized_faces = kf.recognize_face(file=img_path, gallery_name='students')
 
+	print(recognized_faces)
 	status = recognized_faces['images'][0]['transaction']['status']
 
-	# my changes
-	data = json.dumps(recognized_faces)
-	dic_data = json.loads(data)
-	sid = dic_data['images'][0]['candidates'][0]['subject_id']
-
 	if status == 'success' :
+		data = json.dumps(recognized_faces)
+		dic_data = json.loads(data)
+		sid = dic_data['images'][0]['transaction']['subject_id']
 		return sid
 
 	elif status == 'failure' :
@@ -64,6 +63,10 @@ def already_registered(img_path='user_img.png') :
 	else :
 		return "Retake"
 
+	# my changes
+	
+
+	
 # checking already enrolled or not and mark attendance
 def mark_present(sub_id):
 

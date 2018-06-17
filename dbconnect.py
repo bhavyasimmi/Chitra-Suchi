@@ -4,7 +4,7 @@ import mysql.connector as mysql
 
 def connectdb() :
 
-	conn = mysql.connect(user='root',password='root',database='studentdb',host='localhost')
+	conn = mysql.connect(user='bhavya',password='Bhavya1910',database='studentdb',host='localhost')
 
 	#check the connection with database
 	if conn.is_connected():
