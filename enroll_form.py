@@ -37,7 +37,7 @@ def init(data) :
 				return enroll_student(sid)
 
 
-	except kf.exceptions.ServiceRequestError as e1sid = dic_data['images'][0]['transaction']['subject_id'] :
+	except kf.exceptions.ServiceRequestError as e1 :
 		print(e1)
 		return "kairos error"
 
@@ -96,3 +96,8 @@ def enroll_student(sid,img_path='user_img.png') :
 		return "enrolled"
 	elif status == 'failure' :
 		return "not_able_to_enroll"
+
+
+
+
+	

@@ -63,7 +63,6 @@ def already_registered(img_path='user_img.png') :
 	else :
 		return "Retake"
 
-	# my changes
 	
 
 	
