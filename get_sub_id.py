@@ -50,19 +50,29 @@ def already_registered(img_path='user_img.png') :
 
 	status = recognized_faces['images'][0]['transaction']['status']
 
-	# my changes
-	data = json.dumps(recognized_faces)
-	dic_data = json.loads(data)
-	sid = dic_data['images'][0]['candidates'][0]['subject_id']
-
 	if status == 'success' :
-		return sid
+		return get_id(recognized_faces)
 
 	elif status == 'failure' :
 		return None
 
 	else :
 		return "Retake"
+
+
+def get_id(recognized_faces) :
+	
+	data = json.dumps(recognized_faces)
+	dic_data = json.loads(data)
+	
+	print(dic_data)
+
+	sid = dic_data['images'][0]['candidates'][0]['subject_id']
+	return sid
+
+
+
+	
 
 # checking already enrolled or not and mark attendance
 def mark_present(sub_id):

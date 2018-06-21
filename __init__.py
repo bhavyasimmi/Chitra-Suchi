@@ -5,9 +5,7 @@ import enroll_form
 from camera import VideoCamera
 import mysql.connector as mysql
 from plotly.offline import plot
-from plotly.graph_objs import Scatter
 from plotly.graph_objs import Bar
-import plotly.graph_objs as go
 import numpy as np
 import datetime
 import get_sub_id as gsid
@@ -33,10 +31,8 @@ def enroll():
 		return render_template("enroll.html")
 	elif request.method=='POST' :
 		if request.form["action"] == 'SUBMIT':
-
 			userdata = request.form
 			return render_template('take_pic.html',result=userdata)
-
 		else :
 			return "bad request!! Error"
 	else :
@@ -107,11 +103,8 @@ def create_table():
 		print("True")
 
 	response = "<head><meta http-equiv='refresh' content='7'></head>"
-
 	out = cursor.execute("SELECT * FROM students")
-		
 	data = cursor.fetchall()
-
 	return render_template('db_tables.html', data=data)
 
 # below code will show student economy on graph page linking matplotlib with html page
